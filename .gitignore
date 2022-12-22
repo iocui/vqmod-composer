@@ -1,0 +1,6 @@
+logs
+vqcache
+vendor
+checked.cache
+mods.cache
+!.gitignore

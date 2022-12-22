@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>THINKPHP Patch</id>
+    <name>本插件仅用于修复TP6+部分DEBUG, 不影响TP升级</name>
+    <version>6.0</version>
+    <vqmver required="true">2.6.0</vqmver>
+    <author>iocui.com</author>
+
+    <file name="vendor/topthink/framework/src/think/App.php" info="允许使用vqmod重写thinkphp项目下的app目录内所有文件">
+        <operation error="skip" info="App file For non OCMod includes/requires">
+            <search position="replace"><![CDATA[dirname(__DIR__)]]></search>
+            <add><![CDATA[dirname(realpath(__DIR__.'/../../vendor/topthink/framework/src/think'))]]></add>
+        </operation>
+        <operation error="skip" info="For non OCMod includes/requires">
+            <search position="replace" regex="true"><![CDATA[~(\s*)(require|include)(_once)?(\s+|\()(?!VQMod::modCheck\()([^);]+)~]]></search>
+            <add><![CDATA[$1$2$3$4\\VQMod::modCheck($5)]]></add>
+        </operation>
+	</file>
+
+    <file name="vendor/topthink/framework/src/think/route/RuleItem.php" info="解决定义路由含有动态变量时造成大小写敏感问题">
+        <operation error="skip">
+            <search position="replace"><![CDATA['~u']]></search>
+            <add><![CDATA['~ui']]></add>
+        </operation>
+	</file>
+
+    <file name="vendor/topthink/framework/src/think/Http.php" info="解决装载路由配置文件造成测压时卡顿问题">
+        <operation error="skip">
+            <search position="replace"><![CDATA[include $file;]]></search>
+            <add><![CDATA[include_once $file;]]></add>
+        </operation>
+	</file>
+
+    <file name="vendor/topthink/think-trace/src/TraceDebug.php" info="解决长驻内存运行模式下: Trace调试时log重复记录显示">
+        <operation error="skip">
+            <search position="after"><![CDATA[$event->log]]></search>
+            <add><![CDATA[                    $event->log = [];]]></add>
+        </operation>
+	</file>
+    <file name="vendor/topthink/framework/src/think/cache/Driver.php" info="解决长驻内存运行模式下: Trace调试时缓存信息统计数累加">
+        <operation error="skip">
+            <search position="after" offset="2"><![CDATA[$this->writeTimes;]]></search>
+            <add><![CDATA[
+    public function clearQueryTimes(): void
+    {
+        $this->writeTimes = 0;
+        $this->readTimes = 0;
+    }
+            ]]></add>
+        </operation>
+	</file>
+    <file name="vendor/topthink/think-trace/src/Html.php" info="解决长驻内存运行模式下: 强删除缓存文件后Debug报错">
+        <operation error="skip">
+            <search position="replace"><![CDATA[$info[] = $file]]></search>
+            <add><![CDATA[if(is_file($file))$info[] = $file]]></add>
+        </operation>
+        <operation error="skip">
+            <search position="replace"><![CDATA[__DIR__ .]]></search>
+            <add><![CDATA[__DIR__.'/../../vendor/topthink/think-trace/src' .]]></add>
+        </operation>
+	</file>
+</modification>

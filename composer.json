@@ -1,0 +1,25 @@
+{
+    "name": "iocui/vqmod-composer",
+    "description": "vqmod for composer",
+    "type": "library",
+    "keywords": [
+        "vqmod",
+        "vqmod-composer"
+    ],
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "caocao",
+            "email": "pgcao@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0"
+    },
+    "minimum-stability": "dev",
+    "scripts": {
+        "post-autoload-dump": [
+            "php install/index.php"
+        ]
+    }
+}
